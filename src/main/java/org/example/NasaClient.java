@@ -1,51 +1,45 @@
 package org.example;
 
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 
 public class NasaClient {
-    String baseUri = "https://images-api.nasa.gov";
-    String basePath = "search";
 
-    public List<Object> getMarsImages() {
-        RequestSpecification request = given().baseUri(baseUri).basePath(basePath)
-                .queryParam("q", "mars")
-                .queryParam("year_start", "2018")
-                .queryParam("year_end", "2018")
-                .queryParam("keywords", "Mars Exploration Rover (MER)")
-                .queryParam("secondary_creator", "NASA/JPL-Caltech");
+    private List<Object> getImageUrls(Map<String, String> queryParams) {
+        String baseUri = "https://images-api.nasa.gov";
+        String basePath = "search";
 
-        Response response = request.get();
+        Response response = new HttpClient().sendRequest(baseUri, basePath, queryParams);
 
         List<Object> urls = response.jsonPath().getList("collection.items.links.href");
 
         return urls;
     }
 
-    public void verifyVideoRecords() {
-        RequestSpecification request = given().baseUri(baseUri).basePath(basePath)
-                .queryParam("year_start", "2018")
-                .queryParam("year_end", "2018")
-                .queryParam("keywords", "mars")
-                .queryParam("media_type", "video");
+    public List<Object> getMarsImagesUrls() {
+        Map<String, String> queryParams = new HashMap<String,String>();
+        queryParams.put("q", "mars");
+        queryParams.put("year_start", "2018");
+        queryParams.put("year_end", "2018");
+        queryParams.put("keywords", "Mars Exploration Rover (MER)");
+        queryParams.put("secondary_creator", "NASA/JPL-Caltech");
 
-        Response response = request.get();
-
-        List<Object> urls = response.jsonPath().getList("collection.items.links.href");
-
-        Integer j = 0;
-        for (Object url: urls
-             ) {
-            System.out.println("Link: " + j++ + " contains video: " + url.toString().contains("/video/"));
-            System.out.println(url.toString().substring(0, Math.min(url.toString().length(), 60)) + "...");
-        }
+        return getImageUrls(queryParams);
     }
 
+    public List<Object> getVideoUrls() {
+        Map<String, String> queryParams = new HashMap<String,String>();
 
+        queryParams.put("year_start", "2018");
+        queryParams.put("year_end", "2018");
+        queryParams.put("keywords", "mars");
+        queryParams.put("media_type", "video");
 
+        return getImageUrls(queryParams);
+    }
 
 }
