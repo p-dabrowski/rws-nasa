@@ -25,4 +25,27 @@ public class NasaClient {
 
         return urls;
     }
+
+    public void verifyVideoRecords() {
+        RequestSpecification request = given().baseUri(baseUri).basePath(basePath)
+                .queryParam("year_start", "2018")
+                .queryParam("year_end", "2018")
+                .queryParam("keywords", "mars")
+                .queryParam("media_type", "video");
+
+        Response response = request.get();
+
+        List<Object> urls = response.jsonPath().getList("collection.items.links.href");
+
+        Integer j = 0;
+        for (Object url: urls
+             ) {
+            System.out.println("Link: " + j++ + " contains video: " + url.toString().contains("/video/"));
+            System.out.println(url.toString().substring(0, Math.min(url.toString().length(), 60)) + "...");
+        }
+    }
+
+
+
+
 }
