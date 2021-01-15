@@ -4,8 +4,8 @@ This simple app performs some calls on Nasa Api, retrieves 5 images with Mars Su
 ## Technologies
 Java, RestAssured, json.org (jsons decoder/encoder)
 
-## BUILD
+## Build
 mvn install
 
-## RUN
+## Run
 mvn exec:java -Dexec.mainClass="org.example.NasaApi"
